@@ -213,7 +213,7 @@ main{padding:0 0 110px 0;min-height:100vh}
 
 .player .vol-wrap{display:flex;align-items:center;gap:8px;min-width:40px}
 .player .vol-slider{width:0;height:24px;border-radius:999px;cursor:pointer;position:relative;transition:width .2s ease;touch-action:none;overflow:visible; opacity:0;}
-.player .vol-slider::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;transform:translateY(-50%);background:rgba(255,255,255,.3);border-radius:999px}
+.player .vol-slider::before{content:"absolute;left:0;right:0;top:50%;height:4px;transform:translateY(-50%);background:rgba(255,255,255,.3);border-radius:999px}
 .player .vol-wrap:hover .vol-slider,.player .vol-wrap.active .vol-slider{width:80px; opacity:1;}
 .player .vol-fill{position:absolute;left:0;top:50%;height:4px;transform:translateY(-50%);background:var(--red);border-radius:999px;width:100%;pointer-events:none}
 
@@ -259,14 +259,12 @@ main{padding:0 0 110px 0;min-height:100vh}
 </head>
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
   <img src="https://www.jeenaflix.com/DOC-20260325-WA0063..png" alt="JeenaFlix" onerror="this.style.display='none'"/>
   <div class="brand">Jeena<span class="r">Flix</span></div>
   <div class="loader"></div>
 </div>
 
-<!-- TOPBAR -->
 <header class="topbar">
   <div class="logo">
     <img src="https://www.jeenaflix.com/DOC-20260325-WA0063..png" alt="" onerror="this.style.display='none'"/>
@@ -283,11 +281,9 @@ main{padding:0 0 110px 0;min-height:100vh}
 <div id="searchResults" class="search-results"></div>
 
 <main>
-  <!-- HOME -->
   <section id="page-home" class="page active">
     <div id="heroMount"></div>
     
-    <!-- OTT Apps Row -->
     <div class="section" id="ottSection" style="display:none;">
       <h2>Premium OTT Apps</h2>
       <div class="row" id="ottRow"></div>
@@ -296,7 +292,6 @@ main{padding:0 0 110px 0;min-height:100vh}
     <div id="homeRows"><div class="spinner"></div></div>
   </section>
 
-  <!-- MOVIES -->
   <section id="page-movies" class="page">
     <div class="chips-wrap">
       <div class="chips" id="movieChips"></div>
@@ -304,7 +299,6 @@ main{padding:0 0 110px 0;min-height:100vh}
     <div class="grid" id="movieGrid"></div>
   </section>
 
-  <!-- SERIES -->
   <section id="page-series" class="page">
     <div class="chips-wrap">
       <div class="chips" id="seriesChips"></div>
@@ -312,7 +306,6 @@ main{padding:0 0 110px 0;min-height:100vh}
     <div class="grid" id="seriesGrid"></div>
   </section>
 
-  <!-- LIVE TV (Reverted) -->
   <section id="page-live" class="page">
     <div class="chips-wrap">
       <div class="chips" id="liveChips"></div>
@@ -321,7 +314,6 @@ main{padding:0 0 110px 0;min-height:100vh}
   </section>
 </main>
 
-<!-- DETAILS MODAL -->
 <div id="details" class="details">
   <button class="back" onclick="closeDetails()">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
@@ -329,24 +321,20 @@ main{padding:0 0 110px 0;min-height:100vh}
   <div id="detailsContent"></div>
 </div>
 
-<!-- ADVANCED PREMIUM PLAYER (UPDATED LAYOUT) -->
 <div id="player" class="player">
   <video id="video" playsinline preload="auto"></video>
   
-  <!-- Loading & Please Wait State -->
   <div class="loading-wrapper">
      <div class="spinner-circle"></div>
      <div class="wait-text">Please Wait...</div>
   </div>
 
-  <!-- Double-tap seek zones & Tap to show/hide -->
   <div class="tap-zones" id="tapZones">
     <div class="tap-zone left" data-side="left"></div>
     <div class="tap-zone middle"></div>
     <div class="tap-zone right" data-side="right"></div>
   </div>
 
-  <!-- Skip ripples -->
   <div class="seek-ripple left" id="rippleL">
     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
     <span>10s</span>
@@ -362,17 +350,16 @@ main{padding:0 0 110px 0;min-height:100vh}
 
   <div class="floating-btns" id="floatingBtns">
     <button class="btn-skip-intro" id="btnSkipIntro" onclick="skip(85)">Skip Intro</button>
+    <button class="btn-skip-intro" id="btnExternal" style="background:#e50914" onclick="openInExternalPlayer(window.__currentPlaybackUrl)">Open in MX / VLC</button>
   </div>
 
   <div class="pcontrols" id="pcontrols">
-    <!-- Top Bar: Just Close (X) -->
     <div class="ptop">
       <button class="pbtn" onclick="closePlayer()" title="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
 
-    <!-- Center Bar: Circular 10s skips + Play -->
     <div class="center-row">
       <button class="skip-btn" onclick="skip(-10)" title="Back 10s">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5">
@@ -393,7 +380,6 @@ main{padding:0 0 110px 0;min-height:100vh}
       </button>
     </div>
 
-    <!-- Bottom Bar: Seekbar + Left/Center/Right controls -->
     <div class="pbottom">
       <div class="seek" id="pseek">
         <div class="buf" id="pbuf"></div>
@@ -402,7 +388,6 @@ main{padding:0 0 110px 0;min-height:100vh}
       </div>
       
       <div class="prow">
-        <!-- Bottom Left -->
         <div class="prow-left">
             <button class="pbtn" onclick="togglePlay()" id="ppBtn">
               <svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
@@ -416,23 +401,18 @@ main{padding:0 0 110px 0;min-height:100vh}
             <div class="time" id="ptime">0:00 / 0:00</div>
         </div>
 
-        <!-- Bottom Center -->
         <div class="ptitle-bottom" id="ptitle"></div>
 
-        <!-- Bottom Right -->
         <div class="prow-right">
-            <!-- Dummy Audio/Subtitles Icon -->
             <button class="pbtn" title="Audio & Subtitles">
               <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             </button>
             <button class="pbtn" onclick="togglePip()" title="Picture in Picture">
               <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><rect x="12" y="11" width="8" height="6" rx="1" fill="#fff"/></svg>
             </button>
-            <!-- Dummy CC Icon -->
             <button class="pbtn" title="Captions (CC)">
               <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M9 14a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2M15 14a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2"/></svg>
             </button>
-            <!-- Settings/Quality Gear Icon -->
             <button class="pbtn" id="qualityBtn" onclick="cycleQuality()" title="Settings / Quality">
               <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </button>
@@ -445,7 +425,6 @@ main{padding:0 0 110px 0;min-height:100vh}
   </div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottomnav">
   <button class="nav-btn active" data-page="home" onclick="goTo('home')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9M5 10v10h14V10"/></svg>
@@ -476,32 +455,80 @@ const XTREAM = {
 const API_BASE = `http://${XTREAM.server}/player_api.php?username=${XTREAM.user}&password=${XTREAM.pass}`;
 const STREAM_BASE = `http://${XTREAM.server}`;
 
+/* ==== Cloudflare Worker proxy for API + VOD/Series media ==== */
+const MEDIA_PROXY = "https://round-hat-9a73.jeenaflix1.workers.dev/?url=";
+function proxifyMedia(u){
+  if(!u) return u;
+  // Already proxied
+  if(u.indexOf(MEDIA_PROXY) === 0) return u;
+  return MEDIA_PROXY + encodeURIComponent(u);
+}
+
 const PROXIES = [
+  u => MEDIA_PROXY + encodeURIComponent(u),
   u => "https://corsproxy.io/?url=" + encodeURIComponent(u),
-  u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u),
+  u => "https://api.allorigins.win/raw?url=" + encodeURIComponent(u)
 ];
+
 function proxify(u){ return PROXIES[0](u); }
+
+/* ==== Android external player fallback (MX Player / VLC via Intent) ==== */
+function openInExternalPlayer(rawUrl){
+  if(!rawUrl){ showToast('No stream URL'); return; }
+  // Try direct origin URL first (external players handle CORS/mixed-content fine);
+  // fall back to the proxied URL if the app forces HTTPS only.
+  const url = rawUrl;
+  const mime = url.indexOf('.m3u8') !== -1 ? 'application/x-mpegURL'
+             : url.indexOf('.mkv')  !== -1 ? 'video/x-matroska'
+             : url.indexOf('.avi')  !== -1 ? 'video/x-msvideo'
+             : 'video/*';
+  const clean = url.replace(/^https?:\/\//i, '');
+  // Generic intent — lets Android show a chooser (MX Player, VLC, etc.)
+  const intent =
+    'intent://' + clean +
+    '#Intent;action=android.intent.action.VIEW' +
+    ';type=' + mime +
+    ';scheme=' + (url.indexOf('https') === 0 ? 'https' : 'http') +
+    ';S.title=' + encodeURIComponent(document.getElementById('ptitle')?.textContent || 'JeenaFlix') +
+    ';end';
+  try {
+    window.location.href = intent;
+    showToast('Opening in external player…');
+  } catch(e){
+    // Fallback: try MX Player direct scheme, then VLC
+    try { window.location.href = 'mxplayer://' + clean; }
+    catch(_){ try { window.location.href = 'vlc://' + url; } catch(__){ showToast('No external player found'); } }
+  }
+}
+window.openInExternalPlayer = openInExternalPlayer;
+
 async function fetchJSON(url){
   const errors = [];
+  
+  // FIX 1: Direct Fetch handling with native .json() for memory management.
   try{
     const ctrl = new AbortController();
-    const to = setTimeout(()=>ctrl.abort(), 15000);
+    const to = setTimeout(()=>ctrl.abort(), 15000); // 15 seconds for direct
     const r = await fetch(url, {signal: ctrl.signal});
     clearTimeout(to);
     if(r.ok){
-      const txt = await r.text();
-      try { return JSON.parse(txt); } catch(e){ errors.push('parse'); }
+      return await r.json(); 
     } else errors.push('direct '+r.status);
   }catch(e){ errors.push('direct '+String(e).slice(0,30)); }
+  
+  // FIX 2: Proxy handling with 60-second timeouts to support 50MB VOD arrays.
   for (const p of PROXIES){
     try{
+      const proxyUrl = p(url);
       const ctrl = new AbortController();
-      const to = setTimeout(()=>ctrl.abort(), 20000);
-      const r = await fetch(p(url), {signal: ctrl.signal});
+      // Increased timeout to 60000ms. Massive Xtream JSON data needs time via Proxy over Mobile.
+      const to = setTimeout(()=>ctrl.abort(), 60000);
+      const r = await fetch(proxyUrl, {signal: ctrl.signal});
       clearTimeout(to);
       if(!r.ok){ errors.push('proxy '+r.status); continue; }
-      const txt = await r.text();
-      try { return JSON.parse(txt); } catch(e){ errors.push('parse'); continue; }
+      
+      // FIX 3: Using native r.json() instead of JSON.parse(await r.text()) to prevent WebView RAM crashes.
+      return await r.json(); 
     }catch(e){ errors.push(String(e).slice(0,40)); }
   }
   throw new Error('Network failure ('+errors.join(', ')+')');
@@ -545,7 +572,6 @@ function openOTT(appId, appName) {
   showToast(`Connecting to ${appName}...`);
 }
 
-
 /* ====================== XTREAM LOADER ====================== */
 async function loadAll(){
   const [liveCats, vodCats, serCats] = await Promise.all([
@@ -553,18 +579,21 @@ async function loadAll(){
     fetchJSON(`${API_BASE}&action=get_vod_categories`),
     fetchJSON(`${API_BASE}&action=get_series_categories`),
   ]);
+  
   (liveCats||[]).forEach(c=> CAT_MAP.live[c.category_id]=c.category_name);
   (vodCats||[]).forEach(c=> CAT_MAP.vod[c.category_id]=c.category_name);
   (serCats||[]).forEach(c=> CAT_MAP.series[c.category_id]=c.category_name);
 
-  const [liveS, vodS, serS] = await Promise.all([
-    fetchJSON(`${API_BASE}&action=get_live_streams`).catch(()=>[]),
-    fetchJSON(`${API_BASE}&action=get_vod_streams`).catch(()=>[]),
-    fetchJSON(`${API_BASE}&action=get_series`).catch(()=>[]),
-  ]);
+  // FIX 4: Sequential Data Loading.
+  // We no longer use Promise.all() for stream lists.
+  // Firing 3 massive payloads over proxy at exactly the same time throttles Android WebViews and forces network timeouts.
+  const liveS = await fetchJSON(`${API_BASE}&action=get_live_streams`).catch(()=>[]);
+  const vodS = await fetchJSON(`${API_BASE}&action=get_vod_streams`).catch(()=>[]);
+  const serS = await fetchJSON(`${API_BASE}&action=get_series`).catch(()=>[]);
 
   const items = [];
   let id = 0;
+  
   (liveS||[]).forEach(s=>{
     let group = CAT_MAP.live[s.category_id] || 'Live TV';
     items.push({
@@ -574,6 +603,7 @@ async function loadAll(){
       streamId: s.stream_id,
     });
   });
+  
   (vodS||[]).forEach(s=>{
     const ext = s.container_extension || 'mp4';
     items.push({
@@ -584,6 +614,7 @@ async function loadAll(){
       rating: s.rating, year: s.year, plot: s.plot,
     });
   });
+  
   (serS||[]).forEach(s=>{
     items.push({
       id: id++, kind:'series', name: s.name, logo: s.cover||'',
@@ -616,6 +647,7 @@ async function init(){
   try{
     ALL = await loadAll();
     if(!ALL.length) throw new Error('Server returned no items');
+    
     MOVIES = ALL.filter(x=>x.kind==='movie');
     SERIES = ALL.filter(x=>x.kind==='series');
     LIVE = ALL.filter(x=>x.kind==='live');
@@ -889,6 +921,28 @@ let controlsTimer = null;
 let isSeeking = false;
 let hideControlsLocked = false;
 
+/* FIX 5: Android WebView Video Error Capture */
+video.addEventListener('error', () => {
+    const err = video.error;
+    const raw = window.__currentPlaybackUrl;
+    const it = ALL[currentItemId];
+    // Network / decode issue on Movies/Series -> try proxy once before giving up.
+    if(raw && it && (it.kind==='movie'||it.kind==='series') && !window.__proxyRetryDone && err && err.code !== 4){
+        window.__proxyRetryDone = true;
+        showToast('Retrying via proxy…');
+        const proxied = proxifyMedia(raw);
+        try { video.src = proxied; video.load(); video.play().catch(()=>{}); } catch(e){}
+        return;
+    }
+    if(err && err.code === 4) {
+        showToast('Format not supported. Opening external player…');
+    } else {
+        showToast('Playback error. Opening external player…');
+    }
+    playerEl.classList.remove('loading');
+    if(raw) setTimeout(()=> openInExternalPlayer(raw), 400);
+});
+
 async function playItem(id){
   const item = ALL[id]; if(!item) return;
   currentItemId = id;
@@ -930,6 +984,15 @@ async function playItem(id){
   }
   if(!url){ showToast('No stream URL'); playerEl.classList.remove('loading'); return; }
 
+  // Strategy:
+  //  1) Try DIRECT origin URL first (Live TV proves cleartext HTTP works in the WebView).
+  //  2) On network error -> retry via Cloudflare Worker proxy.
+  //  3) On format/media error (WebView cannot decode .mkv / .avi / bad codec) -> open MX / VLC.
+  const originalUrl = url;
+  window.__currentPlaybackUrl = originalUrl;
+  window.__proxyRetryDone = false;
+  // For Movies/Series only. Live TV keeps its existing direct flow.
+
   const startWhenReady = ()=>{
     if(item.kind !== 'live' && saved>5 && isFinite(video.duration) && saved < video.duration-8) video.currentTime = saved;
     video.play().then(()=>showControls(false)).catch(()=>showControls(true));
@@ -953,9 +1016,26 @@ async function playItem(id){
       });
       hls.on(Hls.Events.ERROR, (_,d)=>{
         if(!d || !d.fatal) return;
-        if(d.type === Hls.ErrorTypes.NETWORK_ERROR){ try{ hls.startLoad(); }catch(e){} }
+        if(d.type === Hls.ErrorTypes.NETWORK_ERROR){
+          // First fatal network error on Movies/Series -> retry via proxy once.
+          const it = ALL[currentItemId];
+          if(it && (it.kind==='movie'||it.kind==='series') && !window.__proxyRetryDone){
+            window.__proxyRetryDone = true;
+            try{ hls.destroy(); }catch(e){}
+            showToast('Retrying via proxy…');
+            const proxied = proxifyMedia(window.__currentPlaybackUrl);
+            hls = new Hls({autoStartLoad:true, lowLatencyMode:true, backBufferLength:30, maxBufferLength:20, startLevel:-1});
+            hls.loadSource(proxied); hls.attachMedia(video);
+            return;
+          }
+          try{ hls.startLoad(); }catch(e){}
+        }
         else if(d.type === Hls.ErrorTypes.MEDIA_ERROR){ try{ hls.recoverMediaError(); }catch(e){} }
-        else { showToast('Stream error'); playerEl.classList.remove('loading'); }
+        else {
+          showToast('Stream error. Opening external player…');
+          playerEl.classList.remove('loading');
+          if(window.__currentPlaybackUrl) setTimeout(()=>openInExternalPlayer(window.__currentPlaybackUrl),400);
+        }
       });
     } else if(video.canPlayType('application/vnd.apple.mpegurl')){
       video.src = url;
