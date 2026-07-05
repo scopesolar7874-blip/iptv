@@ -459,10 +459,19 @@ const STREAM_BASE = `http://${XTREAM.server}`;
 const MEDIA_PROXY = "https://round-hat-9a73.jeenaflix1.workers.dev/?url=";
 function proxifyMedia(u){
   if(!u) return u;
-  // Already proxied
-  if(u.indexOf(MEDIA_PROXY) === 0) return u;
+  if(u.indexOf(MEDIA_PROXY) === 0) return u; // already proxied
   return MEDIA_PROXY + encodeURIComponent(u);
 }
+// True when the page is served over HTTPS and the target is plain HTTP.
+// Browsers block that combination (mixed content) so we MUST proxy from the start.
+function mustProxy(u){
+  try {
+    return typeof location !== 'undefined'
+        && location.protocol === 'https:'
+        && /^http:\/\//i.test(u);
+  } catch(e){ return false; }
+}
+function autoProxy(u){ return mustProxy(u) ? proxifyMedia(u) : u; }
 
 const PROXIES = [
   u => MEDIA_PROXY + encodeURIComponent(u),
@@ -504,17 +513,21 @@ window.openInExternalPlayer = openInExternalPlayer;
 
 async function fetchJSON(url){
   const errors = [];
-  
-  // FIX 1: Direct Fetch handling with native .json() for memory management.
-  try{
-    const ctrl = new AbortController();
-    const to = setTimeout(()=>ctrl.abort(), 15000); // 15 seconds for direct
-    const r = await fetch(url, {signal: ctrl.signal});
-    clearTimeout(to);
-    if(r.ok){
-      return await r.json(); 
-    } else errors.push('direct '+r.status);
-  }catch(e){ errors.push('direct '+String(e).slice(0,30)); }
+  const skipDirect = (typeof location!=='undefined' && location.protocol==='https:' && /^http:\/\//i.test(url));
+
+  if(!skipDirect){
+    // Direct fetch only when it CAN succeed (same-origin protocol or HTTPS target).
+    try{
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), 15000);
+      const r = await fetch(url, {signal: ctrl.signal});
+      clearTimeout(to);
+      if(r.ok) return await r.json();
+      errors.push('direct '+r.status);
+    }catch(e){ errors.push('direct '+String(e).slice(0,30)); }
+  } else {
+    errors.push('direct skipped (mixed content)');
+  }
   
   // FIX 2: Proxy handling with 60-second timeouts to support 50MB VOD arrays.
   for (const p of PROXIES){
@@ -984,14 +997,16 @@ async function playItem(id){
   }
   if(!url){ showToast('No stream URL'); playerEl.classList.remove('loading'); return; }
 
-  // Strategy:
-  //  1) Try DIRECT origin URL first (Live TV proves cleartext HTTP works in the WebView).
-  //  2) On network error -> retry via Cloudflare Worker proxy.
-  //  3) On format/media error (WebView cannot decode .mkv / .avi / bad codec) -> open MX / VLC.
+  // Strategy (works on both localhost HTTP and hosted HTTPS like GitHub Pages / Netlify):
+  //  * If page is HTTPS and stream is HTTP -> proxy IMMEDIATELY (browsers block mixed content).
+  //  * Else try DIRECT first, retry via proxy on network error, then MX/VLC on any final failure.
   const originalUrl = url;
   window.__currentPlaybackUrl = originalUrl;
   window.__proxyRetryDone = false;
-  // For Movies/Series only. Live TV keeps its existing direct flow.
+  if(mustProxy(url)){
+    url = proxifyMedia(url);
+    window.__proxyRetryDone = true; // already proxied; skip the "retry via proxy" step
+  }
 
   const startWhenReady = ()=>{
     if(item.kind !== 'live' && saved>5 && isFinite(video.duration) && saved < video.duration-8) video.currentTime = saved;
